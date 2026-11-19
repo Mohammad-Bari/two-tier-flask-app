@@ -1,69 +1,39 @@
-@Library("Shared") _
 pipeline{
-    
-    agent { label "dev"};
-    
+    agent any;
     stages{
-        stage("Code Clone"){
+        stage("Code Checkout"){
             steps{
-               script{
-                   clone("https://github.com/LondheShubham153/two-tier-flask-app.git", "master")
-               }
+                git url:"https://github.com/Mohammad-Bari/two-tier-flask-app.git", branch: "master"
             }
+           
         }
-        stage("Trivy File System Scan"){
-            steps{
-                script{
-                    trivy_fs()
+         stage("Build")
+            {
+                steps{
+                    sh 'docker build -t two-tier-flask-app .'
                 }
             }
-        }
-        stage("Build"){
-            steps{
-                sh "docker build -t two-tier-flask-app ."
+            stage("Push to dockerhub"){
+                steps{
+                withCredentials([usernamePassword(
+                    credentialsId: "dockerhub-credentials",
+                    usernameVariable: "DOCKER_USER",
+                    passwordVariable: "DOCKER_PASS"
+                    )]){
+                        
+                        sh "docker login -u ${env.DOCKER_USER} -p ${env.DOCKER_PASS}"
+                        sh "docker image tag two-tier-flask-app ${env.DOCKER_USER}/two-tier-flask-app"
+                        sh "docker push ${env.DOCKER_USER}/two-tier-flask-app:latest"
+                        
+                    
+                    }
+                }
             }
-            
-        }
-        stage("Test"){
-            steps{
-                sh """
-                    python3 -m venv .venv
-                    .venv/bin/pip install -q -r requirements-dev.txt
-                    .venv/bin/pytest
-                """
+            stage("Run docker compose")
+            {
+                steps{
+                    sh 'docker compose up -d'
+                }
             }
-            
-        }
-        stage("Push to Docker Hub"){
-            steps{
-                script{
-                    docker_push("dockerHubCreds","two-tier-flask-app")
-                }  
-            }
-        }
-        stage("Deploy"){
-            steps{
-                sh "docker compose up -d --build flask-app"
-            }
-        }
-    }
-
-post{
-        success{
-            script{
-                emailext from: 'mentor@trainwithshubham.com',
-                to: 'mentor@trainwithshubham.com',
-                body: 'Build success for Demo CICD App',
-                subject: 'Build success for Demo CICD App'
-            }
-        }
-        failure{
-            script{
-                emailext from: 'mentor@trainwithshubham.com',
-                to: 'mentor@trainwithshubham.com',
-                body: 'Build Failed for Demo CICD App',
-                subject: 'Build Failed for Demo CICD App'
-            }
-        }
     }
 }
