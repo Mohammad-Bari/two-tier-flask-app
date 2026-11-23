@@ -33,7 +33,7 @@ pipeline {
             }
     }
     post{
-        sucess {
+        success {
             emailext (
                 subject: "Build Successful",
                 body: "Good News: Build is successfull!",
