@@ -41,9 +41,12 @@ pipeline {
             ) 
         }
         failure{
-            subject: "Build Failed",
-            body: "Bad News: Your build is failed",
-            to: "nooraliulbari@gmail.com"
+            emailext (
+                subject: "Build Failed",
+                body: "Bad News: Your build is failed",
+                to: "nooraliulbari@gmail.com"
+            )
+           
         }
     }
 }
