@@ -2,7 +2,7 @@ pipeline {
     agent { label 'dev' }
     stages {
         stage('Code Checkout') {
-            step {
+            steps {
                 git url:'https://github.com/Mohammad-Bari/two-tier-flask-app.git', branch: 'master'
             }
         }
@@ -33,20 +33,19 @@ pipeline {
             }
     }
     post{
-        success {
-            emailext (
+        sucess {
+            emailtext(
                 subject: "Build Successful",
                 body: "Good News: Build is successfull!",
                 to: "nooraliulbari@gmail.com"
-            ) 
+            )
         }
         failure {
-            emailext (
-                subject: "Build Failed",
-                body: "Bad News: Your build is failed",
-                to: "nooraliulbari@gmail.com"
+            emailtext (
+            subject: "Build Failed",
+            body: "Bad News: Your build is failed",
+            to: "nooraliulbari@gmail.com"
             )
-           
         }
     }
 }
