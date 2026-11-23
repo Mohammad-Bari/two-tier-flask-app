@@ -1,6 +1,6 @@
 pipeline {
     agent { label 'dev' }
-    stages {
+    stage {
         stage('Code Checkout') {
             steps {
                 git url:'https://github.com/Mohammad-Bari/two-tier-flask-app.git', branch: 'master'
