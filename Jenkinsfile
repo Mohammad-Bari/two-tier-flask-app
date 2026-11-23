@@ -34,7 +34,7 @@ pipeline {
     }
     post{
         sucess {
-            emailtext(
+            emailext (
                 subject: "Build Successful",
                 body: "Good News: Build is successfull!",
                 to: "nooraliulbari@gmail.com"
