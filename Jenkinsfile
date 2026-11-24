@@ -24,15 +24,9 @@ pipeline {
             }
             stage('Push to dockerhub') {
                 steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-credentials',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                    )]) {
-                        sh "docker login -u ${env.DOCKER_USER} -p ${env.DOCKER_PASS}"
-                        sh "docker image tag two-tier-flask-app ${env.DOCKER_USER}/two-tier-flask-app"
-                        sh "docker push ${env.DOCKER_USER}/two-tier-flask-app:latest"
-                }
+                        script{
+                            docker_push("dockerhub-credentials", "two-tier-flask-app")
+                        }
                 }
             }
             stage('Run docker compose')
