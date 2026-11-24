@@ -12,7 +12,7 @@ pipeline {
         stage("Trivy file system scan"){
             steps{
                 script{
-                    trivyScan()
+                    trivyFs()
                 }
             }
         }
